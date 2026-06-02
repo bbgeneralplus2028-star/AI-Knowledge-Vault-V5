@@ -1,131 +1,224 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Knowledge Vault</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Knowledge Vault V6</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 body{
     font-family:Arial,sans-serif;
+    margin:0;
     background:#0b1220;
     color:white;
-    margin:0;
 }
-
 header{
     background:#111827;
     padding:15px;
     text-align:center;
-    font-size:22px;
+    font-size:24px;
+    font-weight:bold;
 }
-
+.container{
+    padding:10px;
+}
 textarea{
-    width:95%;
-    height:180px;
-    margin:10px;
+    width:100%;
+    min-height:180px;
+    margin-top:10px;
+    margin-bottom:10px;
+    box-sizing:border-box;
 }
-
 input{
-    width:95%;
+    width:100%;
     padding:10px;
-    margin:10px;
+    box-sizing:border-box;
+    margin-bottom:10px;
 }
-
 button{
+    margin:4px;
     padding:10px;
-    margin:5px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+.status{
+    padding:10px;
+    margin-top:10px;
+    background:#1f2937;
 }
 </style>
 </head>
-
 <body>
+<header>
+AI Knowledge Vault V6
+</header>
+<div class="container">
+<textarea
+id="inputBox"
+placeholder="Paste notes, legal research, OCR text, PDFs, screenshots, etc..."></textarea>
+<div>
 
-<header>AI Knowledge Vault</header>
+Save
 
-<input id="searchBox" placeholder="Search vault">
+View Vault
 
-<textarea id="inputBox"
-placeholder="Paste notes, OCR text, legal research, etc..."></textarea>
+Search
 
-<br>
+Export
 
-<button onclick="saveText()">Save</button>
-<button onclick="showVault()">View Vault</button>
-<button onclick="searchVault()">Search</button>
-<button onclick="exportVault()">Export</button>
+</div>
+<hr>
+<h3>OCR Scanner</h3>
+<input type="file" id="ocrFile" accept="image/*">
 
-<textarea id="outputBox"></textarea>
+OCR Scan
 
+<hr>
+<h3>Voice Tools</h3>
+
+Voice Dictation
+
+Read Text
+
+<hr>
+<h3>GPT Integration Placeholder</h3>
+<button onclick="futureGPT()">
+GPT Upgrade (Coming Next)
+</button>
+<textarea
+id="outputBox"
+placeholder="Results appear here..."></textarea>
+<div class="status" id="status">
+Ready
+</div>
+</div>
 <script>
-
+function status(msg){
+    document.getElementById("status").innerText = msg;
+}
 function getVault(){
-    return JSON.parse(localStorage.getItem("vault") || "[]");
+    return JSON.parse(
+        localStorage.getItem("vault") || "[]"
+    );
 }
-
 function saveVault(v){
-    localStorage.setItem("vault", JSON.stringify(v));
+    localStorage.setItem(
+        "vault",
+        JSON.stringify(v)
+    );
 }
-
 function saveText(){
-
-    let vault = getVault();
-
+    const text =
+        document.getElementById("inputBox").value;
+    if(!text.trim()) return;
+    const vault = getVault();
     vault.push({
         date:new Date().toISOString(),
-        text:document.getElementById("inputBox").value
+        text:text
     });
-
     saveVault(vault);
-
-    alert("Saved");
+    status("Saved to vault");
 }
-
-function showVault(){
-
-    let vault = getVault();
-
+function viewVault(){
+    const vault = getVault();
     document.getElementById("outputBox").value =
-        vault.map(x=>x.text).join("\n\n==========\n\n");
+        vault.map(x =>
+            "[" + x.date + "]\n" + x.text
+        ).join("\n\n====================\n\n");
+    status("Vault loaded");
 }
-
 function searchVault(){
-
-    let q =
+    const q =
         document.getElementById("searchBox")
         .value.toLowerCase();
-
-    let vault = getVault();
-
-    let results =
+    const vault = getVault();
+    const results =
         vault.filter(x =>
             x.text.toLowerCase().includes(q)
         );
-
     document.getElementById("outputBox").value =
-        results.map(x=>x.text)
-        .join("\n\n==========\n\n");
+        results.map(x => x.text)
+        .join("\n\n-----------------\n\n");
+    status(results.length + " result(s)");
 }
-
 function exportVault(){
-
-    let vault = getVault();
-
-    let blob = new Blob(
-        [JSON.stringify(vault,null,2)],
-        {type:"application/json"}
-    );
-
-    let a=document.createElement("a");
-
-    a.href=URL.createObjectURL(blob);
-
-    a.download="vault.json";
-
+    const vault = getVault();
+    const blob =
+        new Blob(
+            [JSON.stringify(vault,null,2)],
+            {type:"application/json"}
+        );
+    const a =
+        document.createElement("a");
+    a.href =
+        URL.createObjectURL(blob);
+    a.download =
+        "AI_Knowledge_Vault.json";
     a.click();
+    status("Vault exported");
 }
-
+async function runOCR(){
+    const file =
+        document.getElementById("ocrFile")
+        .files[0];
+    if(!file){
+        alert("Choose an image first");
+        return;
+    }
+    status("Running OCR...");
+    const result =
+        await Tesseract.recognize(
+            file,
+            "eng"
+        );
+    document.getElementById("inputBox").value =
+        result.data.text;
+    status("OCR complete");
+}
+function startDictation(){
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+    if(!SpeechRecognition){
+        alert("Speech recognition not supported");
+        return;
+    }
+    const rec =
+        new SpeechRecognition();
+    rec.onresult = function(e){
+        const text =
+            e.results[0][0].transcript;
+        document.getElementById("inputBox").value +=
+            "\n" + text;
+    };
+    rec.start();
+    status("Listening...");
+}
+function readText(){
+    const text =
+        document.getElementById("inputBox").value;
+    const speech =
+        new SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(speech);
+    status("Reading text");
+}
+function futureGPT(){
+    alert(
+        "Next upgrade: secure GPT integration via backend proxy."
+    );
+}
+if("serviceWorker" in navigator){
+    window.addEventListener(
+        "load",
+        function(){
+            navigator.serviceWorker
+                .register("sw.js")
+                .catch(console.error);
+        }
+    );
+}
 </script>
-
 </body>
 </html>
