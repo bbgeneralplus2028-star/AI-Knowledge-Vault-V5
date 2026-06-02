@@ -1,224 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AI Knowledge Vault V6</title>
-<link rel="manifest" href="manifest.json">
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<style>
-body{
-    font-family:Arial,sans-serif;
-    margin:0;
-    background:#0b1220;
-    color:white;
-}
-header{
-    background:#111827;
-    padding:15px;
-    text-align:center;
-    font-size:24px;
-    font-weight:bold;
-}
-.container{
-    padding:10px;
-}
-textarea{
-    width:100%;
-    min-height:180px;
-    margin-top:10px;
-    margin-bottom:10px;
-    box-sizing:border-box;
-}
-input{
-    width:100%;
-    padding:10px;
-    box-sizing:border-box;
-    margin-bottom:10px;
-}
-button{
-    margin:4px;
-    padding:10px;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-}
-.status{
-    padding:10px;
-    margin-top:10px;
-    background:#1f2937;
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Knowledge Vault V10</title>
 </head>
 <body>
-<header>
-AI Knowledge Vault V6
-</header>
-<div class="container">
-<textarea
-id="inputBox"
-placeholder="Paste notes, legal research, OCR text, PDFs, screenshots, etc..."></textarea>
-<div>
 
-Save
+<h1>AI Knowledge Vault V10</h1>
 
-View Vault
+<textarea id="input" style="width:100%;height:150px;"></textarea>
 
-Search
+<button onclick="save()">Save</button>
+<button onclick="load()">Load</button>
 
-Export
-
-</div>
-<hr>
-<h3>OCR Scanner</h3>
-<input type="file" id="ocrFile" accept="image/*">
-
-OCR Scan
-
-<hr>
-<h3>Voice Tools</h3>
-
-Voice Dictation
-
-Read Text
-
-<hr>
-<h3>GPT Integration Placeholder</h3>
-<button onclick="futureGPT()">
-GPT Upgrade (Coming Next)
-</button>
-<textarea
-id="outputBox"
-placeholder="Results appear here..."></textarea>
-<div class="status" id="status">
-Ready
-</div>
-</div>
 <script>
-function status(msg){
-    document.getElementById("status").innerText = msg;
+function save(){
+    localStorage.setItem("vault", document.getElementById("input").value);
+    alert("Saved to Vault");
 }
-function getVault(){
-    return JSON.parse(
-        localStorage.getItem("vault") || "[]"
-    );
-}
-function saveVault(v){
-    localStorage.setItem(
-        "vault",
-        JSON.stringify(v)
-    );
-}
-function saveText(){
-    const text =
-        document.getElementById("inputBox").value;
-    if(!text.trim()) return;
-    const vault = getVault();
-    vault.push({
-        date:new Date().toISOString(),
-        text:text
-    });
-    saveVault(vault);
-    status("Saved to vault");
-}
-function viewVault(){
-    const vault = getVault();
-    document.getElementById("outputBox").value =
-        vault.map(x =>
-            "[" + x.date + "]\n" + x.text
-        ).join("\n\n====================\n\n");
-    status("Vault loaded");
-}
-function searchVault(){
-    const q =
-        document.getElementById("searchBox")
-        .value.toLowerCase();
-    const vault = getVault();
-    const results =
-        vault.filter(x =>
-            x.text.toLowerCase().includes(q)
-        );
-    document.getElementById("outputBox").value =
-        results.map(x => x.text)
-        .join("\n\n-----------------\n\n");
-    status(results.length + " result(s)");
-}
-function exportVault(){
-    const vault = getVault();
-    const blob =
-        new Blob(
-            [JSON.stringify(vault,null,2)],
-            {type:"application/json"}
-        );
-    const a =
-        document.createElement("a");
-    a.href =
-        URL.createObjectURL(blob);
-    a.download =
-        "AI_Knowledge_Vault.json";
-    a.click();
-    status("Vault exported");
-}
-async function runOCR(){
-    const file =
-        document.getElementById("ocrFile")
-        .files[0];
-    if(!file){
-        alert("Choose an image first");
-        return;
-    }
-    status("Running OCR...");
-    const result =
-        await Tesseract.recognize(
-            file,
-            "eng"
-        );
-    document.getElementById("inputBox").value =
-        result.data.text;
-    status("OCR complete");
-}
-function startDictation(){
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-    if(!SpeechRecognition){
-        alert("Speech recognition not supported");
-        return;
-    }
-    const rec =
-        new SpeechRecognition();
-    rec.onresult = function(e){
-        const text =
-            e.results[0][0].transcript;
-        document.getElementById("inputBox").value +=
-            "\n" + text;
-    };
-    rec.start();
-    status("Listening...");
-}
-function readText(){
-    const text =
-        document.getElementById("inputBox").value;
-    const speech =
-        new SpeechSynthesisUtterance(text);
-    speechSynthesis.speak(speech);
-    status("Reading text");
-}
-function futureGPT(){
-    alert(
-        "Next upgrade: secure GPT integration via backend proxy."
-    );
-}
-if("serviceWorker" in navigator){
-    window.addEventListener(
-        "load",
-        function(){
-            navigator.serviceWorker
-                .register("sw.js")
-                .catch(console.error);
-        }
-    );
+
+function load(){
+    document.getElementById("input").value =
+        localStorage.getItem("vault") || "";
 }
 </script>
+
 </body>
 </html>
