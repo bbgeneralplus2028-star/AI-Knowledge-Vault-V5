@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AI Vault TEST V11+</title>
+</head>
+<body>
+
+<h1>AI Vault TEST MODE</h1>
+
+<input type="file" id="img" accept="image/*">
+<textarea id="out" style="width:100%;height:200px;"></textarea>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<script>
+
+// AUTO OCR TEST MODE
+document.getElementById("img").addEventListener("change", async function(){
+
+    const file = this.files[0];
+    if(!file) return;
+
+    document.getElementById("out").value = "Scanning...";
+
+    const result = await Tesseract.recognize(file, "eng");
+
+    document.getElementById("out").value = result.data.text;
+
+    // auto save test memory
+    localStorage.setItem("vault_test",
+        (localStorage.getItem("vault_test") || "") +
+        "
+
+" + result.data.text
+    );
+});
+
+</script>
+
+</body>
+</html>
