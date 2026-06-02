@@ -1,30 +1,46 @@
-<!DOCTYPE html>
+HTML = """<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Knowledge Vault V10</title>
+<title>AI Knowledge Vault V11 OCR Auto</title>
 </head>
 <body>
 
-<h1>AI Knowledge Vault V10</h1>
+<h2>AI Vault V11 - Auto OCR Mode</h2>
 
-<textarea id="input" style="width:100%;height:150px;"></textarea>
+<input type="file" id="img" accept="image/*">
 
-<button onclick="save()">Save</button>
-<button onclick="load()">Load</button>
+<textarea id="output" style="width:100%;height:200px;"></textarea>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
-function save(){
-    localStorage.setItem("vault", document.getElementById("input").value);
-    alert("Saved to Vault");
-}
 
-function load(){
-    document.getElementById("input").value =
-        localStorage.getItem("vault") || "";
-}
+// AUTO OCR ON FILE SELECT
+document.getElementById("img").addEventListener("change", async function(){
+
+    const file = this.files[0];
+    if(!file) return;
+
+    document.getElementById("output").value = "Scanning...";
+
+    const result = await Tesseract.recognize(file, "eng");
+
+    const text = result.data.text;
+
+    document.getElementById("output").value = text;
+
+    // AUTO SAVE TO VAULT
+    localStorage.setItem("vault_v11",
+        (localStorage.getItem("vault_v11") || "") + "\n\n" + text
+    );
+
+    alert("Auto OCR Complete + Saved");
+});
+
 </script>
 
 </body>
 </html>
+"""
