@@ -1,11 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset='UTF-8'>
-<title>AI Vault Live</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Knowledge Vault V5</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#0b1220;
+    color:white;
+    margin:0;
+}
+
+header{
+    background:#111827;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+}
+
+textarea{
+    width:95%;
+    height:200px;
+    margin:10px;
+}
+
+button{
+    padding:10px;
+    margin:5px;
+}
+</style>
 </head>
+
 <body>
-<h1>AI Knowledge Vault LIVE</h1>
-<script src='app.js'></script>
+
+<header>AI Knowledge Vault V5</header>
+
+<textarea id="inputBox"
+placeholder="Paste notes, legal text, PDFs, OCR text, etc..."></textarea>
+
+<br>
+
+<button onclick="saveText()">Save</button>
+<button onclick="showMemory()">View Saved Data</button>
+
+<textarea id="outputBox"
+placeholder="Results appear here..."></textarea>
+
+<script>
+function saveText(){
+    const text = document.getElementById("inputBox").value;
+
+    let memory =
+        JSON.parse(localStorage.getItem("vault") || "[]");
+
+    memory.push(text);
+
+    localStorage.setItem(
+        "vault",
+        JSON.stringify(memory)
+    );
+
+    alert("Saved");
+}
+
+function showMemory(){
+    let memory =
+        JSON.parse(localStorage.getItem("vault") || "[]");
+
+    document.getElementById("outputBox").value =
+        memory.join("\\n\\n----------------\\n\\n");
+}
+</script>
+
 </body>
 </html>
