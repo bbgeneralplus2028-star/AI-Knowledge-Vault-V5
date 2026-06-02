@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Knowledge Vault V5</title>
+<title>AI Knowledge Vault</title>
 
 <style>
 body{
@@ -22,7 +22,13 @@ header{
 
 textarea{
     width:95%;
-    height:200px;
+    height:180px;
+    margin:10px;
+}
+
+input{
+    width:95%;
+    padding:10px;
     margin:10px;
 }
 
@@ -35,43 +41,90 @@ button{
 
 <body>
 
-<header>AI Knowledge Vault V5</header>
+<header>AI Knowledge Vault</header>
+
+<input id="searchBox" placeholder="Search vault">
 
 <textarea id="inputBox"
-placeholder="Paste notes, legal text, PDFs, OCR text, etc..."></textarea>
+placeholder="Paste notes, OCR text, legal research, etc..."></textarea>
 
 <br>
 
 <button onclick="saveText()">Save</button>
-<button onclick="showMemory()">View Saved Data</button>
+<button onclick="showVault()">View Vault</button>
+<button onclick="searchVault()">Search</button>
+<button onclick="exportVault()">Export</button>
 
-<textarea id="outputBox"
-placeholder="Results appear here..."></textarea>
+<textarea id="outputBox"></textarea>
 
 <script>
+
+function getVault(){
+    return JSON.parse(localStorage.getItem("vault") || "[]");
+}
+
+function saveVault(v){
+    localStorage.setItem("vault", JSON.stringify(v));
+}
+
 function saveText(){
-    const text = document.getElementById("inputBox").value;
 
-    let memory =
-        JSON.parse(localStorage.getItem("vault") || "[]");
+    let vault = getVault();
 
-    memory.push(text);
+    vault.push({
+        date:new Date().toISOString(),
+        text:document.getElementById("inputBox").value
+    });
 
-    localStorage.setItem(
-        "vault",
-        JSON.stringify(memory)
-    );
+    saveVault(vault);
 
     alert("Saved");
 }
 
-function showMemory(){
-    let memory =
-        JSON.parse(localStorage.getItem("vault") || "[]");
+function showVault(){
+
+    let vault = getVault();
 
     document.getElementById("outputBox").value =
-        memory.join("\\n\\n----------------\\n\\n");
+        vault.map(x=>x.text).join("\n\n==========\n\n");
 }
+
+function searchVault(){
+
+    let q =
+        document.getElementById("searchBox")
+        .value.toLowerCase();
+
+    let vault = getVault();
+
+    let results =
+        vault.filter(x =>
+            x.text.toLowerCase().includes(q)
+        );
+
+    document.getElementById("outputBox").value =
+        results.map(x=>x.text)
+        .join("\n\n==========\n\n");
+}
+
+function exportVault(){
+
+    let vault = getVault();
+
+    let blob = new Blob(
+        [JSON.stringify(vault,null,2)],
+        {type:"application/json"}
+    );
+
+    let a=document.createElement("a");
+
+    a.href=URL.createObjectURL(blob);
+
+    a.download="vault.json";
+
+    a.click();
+}
+
 </script>
 
 </body>
