@@ -1,46 +1,11 @@
-HTML = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Knowledge Vault V11 OCR Auto</title>
+<title>AI Vault LIVE</title>
 </head>
 <body>
-
-<h2>AI Vault V11 - Auto OCR Mode</h2>
-
-<input type="file" id="img" accept="image/*">
-
-<textarea id="output" style="width:100%;height:200px;"></textarea>
-
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-
-<script>
-
-// AUTO OCR ON FILE SELECT
-document.getElementById("img").addEventListener("change", async function(){
-
-    const file = this.files[0];
-    if(!file) return;
-
-    document.getElementById("output").value = "Scanning...";
-
-    const result = await Tesseract.recognize(file, "eng");
-
-    const text = result.data.text;
-
-    document.getElementById("output").value = text;
-
-    // AUTO SAVE TO VAULT
-    localStorage.setItem("vault_v11",
-        (localStorage.getItem("vault_v11") || "") + "\n\n" + text
-    );
-
-    alert("Auto OCR Complete + Saved");
-});
-
-</script>
-
+<h1>AI Knowledge Vault - LIVE</h1>
+<p>Stable version running</p>
 </body>
 </html>
-"""
