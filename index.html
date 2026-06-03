@@ -2,78 +2,23 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Vault V12 Clean PDF Tools</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Knowledge Vault</title>
+<link rel="stylesheet" href="../assets/css/style.css">
 </head>
+<body>
 
-<body style="font-family:Arial">
+<h1>AI Knowledge Vault</h1>
 
-<h2>AI PDF Toolbox V12</h2>
+<p>Live Version</p>
 
-<select id="tool">
-  <option value="">Select Tool</option>
-
-  <option value="img2pdf">Image to PDF</option>
-  <option value="text2pdf">Text to PDF</option>
-  <option value="web2pdf">Web to PDF</option>
-
-  <option value="pdf2text">PDF to Text</option>
-  <option value="pdf2img">PDF to Image</option>
-
-  <option value="merge">Merge PDFs</option>
-  <option value="compress">Reduce File Size</option>
-</select>
+<textarea id="notes"></textarea>
 
 <br><br>
 
-<input type="file" id="file" multiple>
+<button onclick="saveNote()">Save Note</button>
 
-<textarea id="input" style="width:100%;height:120px;" placeholder="Enter text here"></textarea>
-
-<button onclick="runTool()">Run Tool</button>
-
-<h3>Output</h3>
-<pre id="output"></pre>
-
-<script>
-
-function runTool(){
-
-    let tool = document.getElementById("tool").value;
-    let text = document.getElementById("input").value;
-
-    let result = "";
-
-    if(tool === "img2pdf"){
-        result = "Image to PDF selected";
-    }
-    else if(tool === "text2pdf"){
-        result = "Text to PDF created: " + text;
-        localStorage.setItem("pdf_text", text);
-    }
-    else if(tool === "web2pdf"){
-        result = "Web to PDF tool ready";
-    }
-    else if(tool === "pdf2text"){
-        result = "PDF to text extraction ready";
-    }
-    else if(tool === "pdf2img"){
-        result = "PDF to image conversion ready";
-    }
-    else if(tool === "merge"){
-        result = "PDF merge tool ready";
-    }
-    else if(tool === "compress"){
-        result = "PDF compression tool ready";
-    }
-    else {
-        result = "Select a tool first";
-    }
-
-    document.getElementById("output").innerText = result;
-}
-
-</script>
+<script src="../assets/js/app.js"></script>
 
 </body>
 </html>
