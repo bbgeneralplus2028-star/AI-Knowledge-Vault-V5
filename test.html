@@ -1,15 +1,212 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Knowledge Vault Test Lab</title>
-<link rel="stylesheet" href="../assets/css/style.css">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>AI Knowledge Vault V14 Test</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    margin:20px;
+}
+
+section{
+    border:1px solid #ccc;
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:15px;
+}
+
+textarea{
+    width:100%;
+    min-height:120px;
+}
+
+input[type=text]{
+    width:100%;
+    padding:8px;
+}
+
+button{
+    padding:8px 12px;
+    margin:4px;
+}
+
+h1{
+    text-align:center;
+}
+
+#recentDocs{
+    min-height:50px;
+}
+
+#ebookPages{
+    min-height:150px;
+}
+</style>
 </head>
+
 <body>
 
-<h1>AI Test Lab</h1>
+<h1>AI Knowledge Vault V14 Test</h1>
 
-<p>OCR, PDF, Voice and AI features will be tested here.</p>
+<section>
+<h2>Notes Workspace</h2>
+
+<textarea id="notes"></textarea>
+
+<br>
+
+<button onclick="saveNotes()">Save Notes</button>
+<button onclick="loadNotes()">Load Notes</button>
+<button onclick="clearNotes()">Clear</button>
+
+</section>
+
+<section>
+<h2>Document Upload</h2>
+
+<input type="file" multiple>
+
+<div id="recentDocs">
+Recent documents will appear here.
+</div>
+
+</section>
+
+<section>
+<h2>Search Documents</h2>
+
+<input type="text" id="searchBox" placeholder="Search document library">
+</section>
+
+<section>
+<h2>Camera Scanner</h2>
+
+<button>Open Camera</button>
+
+<p>
+Camera scanner integration placeholder.
+</p>
+
+</section>
+
+<section>
+<h2>OCR Workspace</h2>
+
+<input type="file" accept="image/*">
+
+<textarea placeholder="OCR extracted text"></textarea>
+
+</section>
+
+<section>
+<h2>PDF Toolbox</h2>
+
+<select>
+<option>Image to PDF</option>
+<option>Text to PDF</option>
+<option>PDF to Text</option>
+<option>Merge PDFs</option>
+<option>Word to PDF</option>
+<option>Excel to PDF</option>
+<option>PowerPoint to PDF</option>
+</select>
+
+</section>
+
+<section>
+<h2>Ebook Builder</h2>
+
+<textarea id="ebookPages"
+placeholder="Selected pages for ebook">
+</textarea>
+
+<br>
+
+<button>Create Ebook</button>
+<button>Export TXT</button>
+
+</section>
+
+<section>
+<h2>AI Workspace</h2>
+
+<textarea id="documentText"
+placeholder="Paste document text">
+</textarea>
+
+<input type="text"
+placeholder="Ask a question about your document">
+
+<br>
+
+<button>Summarize</button>
+<button>Analyze</button>
+<button>Extract Key Points</button>
+
+</section>
+
+<section>
+<h2>Flashcard Generator</h2>
+
+<textarea placeholder="Generated flashcards">
+</textarea>
+
+<button>Create Flashcards</button>
+
+</section>
+
+<section>
+<h2>Quiz Generator</h2>
+
+<textarea placeholder="Generated quiz">
+</textarea>
+
+<button>Create Quiz</button>
+
+</section>
+
+<section>
+<h2>Voice Controls</h2>
+
+<button>Start Listening</button>
+<button>Stop Listening</button>
+<button>Read Aloud</button>
+
+</section>
+
+<script>
+
+function saveNotes(){
+
+localStorage.setItem(
+'vault_notes',
+document.getElementById('notes').value
+);
+
+alert('Notes Saved');
+
+}
+
+function loadNotes(){
+
+document.getElementById('notes').value =
+localStorage.getItem('vault_notes') || '';
+
+}
+
+function clearNotes(){
+
+document.getElementById('notes').value='';
+
+}
+
+window.onload = loadNotes;
+
+</script>
 
 </body>
 </html>
